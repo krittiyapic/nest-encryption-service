@@ -41,6 +41,23 @@ $ npm run start:dev
 $ npm run test:e2e
 ```
 
-### Swagger
+## Swagger
 
 http://localhost:3000/api-docs
+
+## 🔑 Key Configuration
+
+ใช้ RSA Key ที่ generate จาก (ถ้า Key เดิมไม่สามารถใช้งานได้)
+
+👉 https://cryptotools.net/rsagen
+
+สร้างไฟล์ หรือ Replace key `env.dev`  ที่ root ของโปรเจกต์
+
+```env
+PUBLIC_KEY="-----BEGIN PUBLIC KEY-----
+YOUR_PUBLIC_KEY_HERE
+-----END PUBLIC KEY-----"
+
+PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----
+YOUR_PRIVATE_KEY_HERE
+-----END RSA PRIVATE KEY-----"
