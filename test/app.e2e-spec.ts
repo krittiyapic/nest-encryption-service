@@ -1,25 +1,61 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
+import { AppModule } from '../src/app.module';
 import { App } from 'supertest/types';
-import { AppModule } from './../src/app.module';
+import { ApiRes, DecryptDto, EncryptDto } from 'src/app.dto';
 
-describe('AppController (e2e)', () => {
-  let app: INestApplication<App>;
+interface ResEncrypt {
+  body: ApiRes<DecryptDto>;
+}
 
-  beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
+interface ResDecrypt {
+  body: ApiRes<EncryptDto>;
+}
+
+describe('Encrypt / Decrypt Service', () => {
+  let app: INestApplication;
+
+  beforeAll(async () => {
+    const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
+    app = moduleRef.createNestApplication();
     await app.init();
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+  it('Case: Encrypt Success', async () => {
+    const encRes: ResEncrypt = await request(app.getHttpServer() as App)
+      .post('/get-encrypt-data')
+      .send({ payload: 'Test Encryption' });
+
+    expect(encRes.body.successful).toBe(true);
+    expect(encRes.body.error_code).toBe('');
+    expect(encRes.body.data).not.toBeNull();
+  });
+
+  it('Case: Encrypt Failed', async () => {
+    const encRes: ResEncrypt = await request(app.getHttpServer() as App)
+      .post('/get-encrypt-data')
+      .send({ payload: null });
+
+    expect(encRes.body.successful).toBe(false);
+    expect(encRes.body.error_code).toBe('ENCRYPT_FAILED');
+    expect(encRes.body.data).toBeNull();
+  });
+
+  it('Case: Encrypt + Decrypt Success Flow', async () => {
+    const payload = 'Krittiya Pichai';
+
+    const encRes: ResEncrypt = await request(app.getHttpServer() as App)
+      .post('/get-encrypt-data')
+      .send({ payload });
+
+    const decRes: ResDecrypt = await request(app.getHttpServer() as App)
+      .post('/get-decrypt-data')
+      .send(encRes.body.data ?? {});
+
+    expect(decRes.body.data?.payload).toBe(payload);
   });
 });

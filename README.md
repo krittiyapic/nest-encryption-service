@@ -8,7 +8,7 @@
 - REST API
 - Encryption / Decryption
 - Swagger API Document (`/api-docs`)
-- Unit Test
+- Unit Test (HTTP Server)
 
 ---
 
@@ -35,14 +35,10 @@ $ npm install
 $ npm run start:dev
 ```
 
-## Run tests
+## Run tests (HTTP Server)
 
 ```bash
-# unit tests
-$ npm run test
-
-# test coverage
-$ npm run test:cov
+$ npm run test:e2e
 ```
 
 ### Swagger
